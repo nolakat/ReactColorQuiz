@@ -1,0 +1,133 @@
+*:focus {
+  outline: none;
+}
+
+html, body {
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+svg {
+  position: absolute;
+}
+
+#test {
+  fill: pink;
+}
+
+.hero {
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+#stuff {
+  z-index: 99;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+ul li {
+  display: inline-block;
+}
+ul li button {
+  padding: 1em 1.5em;
+  margin: 0 1em;
+  cursor: pointer;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  -webkit-transition: all .25s;
+  transition: all .25s;
+}
+ul li button:hover {
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  flex-direction: column;
+}
+
+.score {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  opacity: .7;
+  top: 0;
+  right: 0;
+  font-size: 25px;
+}
+
+.footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  bottom: 0;
+}
+
+.flip {
+  position: absolute;
+  transform: rotate(360deg) scaleX(-1);
+}
+
+.slide-appear {
+  transition: opacity 1.7s ease-in;
+}
+
+@keyframes enter {
+  0% {
+    margin-left: 100px;
+  }
+  100% {
+    margin-left: 0px;
+  }
+}
+.slide-leave {
+  max-height: 1000px;
+  transition: all .3s ease-out;
+}
+
+#box svg {
+  background: yellow;
+  margin: 0 auto;
+  opacity: 0;
+  z-index: -2;
+}
+
+.slide-leave.slide-leave-active {
+  fill: purple;
+  opacity: 1 !important;
+  animation: leave 3s;
+}
+
+#box.slide-leave.slide-leave-active svg {
+  z-index: -10;
+  position: absolute;
+  opacity: 1;
+}
+
+@keyframes leave {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-800px);
+  }
+}
+#content span {
+  z-index: -10;
+}

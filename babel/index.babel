@@ -1,0 +1,230 @@
+
+class Quiz extends React.Component{  
+  constructor(props){
+    super(props); 
+      this.state = {
+      background: null,
+      correct: 0,
+      total: 0,
+    }
+    
+    this.generateColors = this.generateColors.bind(this);
+    this.gameLogic = this.gameLogic.bind(this);
+    this.preventDupes = this.preventDupes.bind(this);
+    this.setKeys = this.setKeys.bind(this);    
+   }
+  
+  componentWillMount(){
+    this.generateColors();
+  }
+   
+  generateColors(){
+    //temp array to store colors
+     let tempArr = [];    
+    //pick from list of colors
+   const colorList = [['red', 'red'], ['blue', 'blue'],['green', 'green']];
+        
+    //loop through colors and pick 3. 
+    for(var i = 0; i < 3; i++){
+   let n = Math.floor(Math.random() * colorList.length); 
+   let b  = colorList.splice(n,1);
+   tempArr.push([b[0]]);
+    }
+     
+       //create AnswerKey from first Color in Array
+    let newKey = tempArr[0][0][0];
+    this.setKeys(tempArr, newKey);
+  }
+  
+  
+  setKeys(tempArr, newKey){
+    const oldKey = this.state.background;
+
+    let isMatch = this.preventDupes(newKey, oldKey);
+    if (isMatch == false){
+      tempArr = [];
+      this.generateColors();
+      return;
+    }
+   
+    this.setState(function(prevState){
+      return {background:newKey}
+    })
+    
+    let mixedkeys = this.shuffle(tempArr);
+    listofKeys = mixedkeys;
+    keyColor = newKey;
+  }
+  
+  shuffle(arr) {
+    var i,
+        j,
+        temp;
+    for (i = arr.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+    return arr;    
+};
+  
+  preventDupes(newKey, oldKey){
+    if(newKey == oldKey){
+      return false;
+    } else { 
+     return newKey;
+    }
+  }
+  
+  gameLogic(element, newKey){
+    if(element[0][0] == newKey){
+     this.setState({correct: this.state.correct + 1});
+    }
+    this.setState({total: this.state.total + 1});
+    this.generateColors();    
+  }
+
+  render(){ 
+    return(
+     <div>
+      <div id="content">
+        <div className="score"><h2><sup>{this.state.correct}</sup><span>/</span><sub>{this.state.total}</sub></h2></div>
+          <h1>What Color Am I?</h1>
+          <ButtonList colors={listofKeys} keyColor={keyColor} action={this.gameLogic}/>
+        <div className="footer"> <h5>🌈She Comes in Colors Everywhere<span className="flip">🌈</span></h5>            </div>  
+          <SvgBG keyColor={keyColor}/>
+      </div>
+        </div>
+        
+    )
+  }
+} 
+
+//do I use class or const??
+class SvgBG extends React.Component{ 
+  
+  componentDidMount(){
+    //on first question always use first transition
+        this.slideRight();  
+  }
+  
+  componentWillMount(){
+    //set initial values??
+  
+  }
+
+    componentWillUpdate(){
+    this.setAnimation();
+  }
+  
+  setAnimation(){
+let randNum = Math.floor(Math.random() * 2)
+switch (randNum) {
+case 0:
+    this.slideUp();
+break;
+case 1:
+    this.slideRight();
+break;
+default:
+ this.slideUp();
+}
+ 
+    
+ 
+  }
+  
+
+  slideUp(){
+    console.log('slideUp fired');
+    TweenMax.to("#hero", 2, {fill: keyColor, ease:Expo.easeInOut});
+
+    
+    
+     TweenMax.from('#testL', 1, {
+      width: window.innerWidth,
+      height: 0,
+      x: 0,
+      y: 400
+    });
+    TweenMax.to('#testL',1, {
+      width: window.innerWidth,
+      fill: keyColor,
+      height: window.innerHeight
+    }); 
+   
+    return;
+  };
+  
+   slideRight(){
+    console.log('slideRight fired.');
+    
+    TweenMax.to("#hero", 2, {fill: keyColor, ease:Expo.easeInOut});
+    
+    TweenMax.from('#testL', 1, {
+      width:0,
+      height: window.innerHeight
+    });
+    TweenMax.to('#testL',1, {
+      width: window.innerWidth,
+      fill: keyColor,
+      height: window.innerHeight
+    }); 
+     
+     return;
+  };
+  
+  
+  
+  render(){
+   keyColor = this.props.keyColor;
+    console.log('drawBackground: ', keyColor);
+
+    return(
+   <div>
+    <DrawTrans />       
+  </div>
+    )
+  }
+}
+
+class DrawTrans extends React.Component{
+  render(){
+    console.log('DrawTrans firing');
+   
+    return(
+      <div>
+        <svg className="hero" id="hero" width={window.innerWidth} height={window.innerHeight} fill="transparent">
+        <rect id="newBG" x="0" y="0" width="100%" height="100%"  stroke="rgba(100, 100, 0, 1)" stroke-width="1"/>
+        <rect id="testL" className="test" x="0" y="0" width="0" height="0"/>
+        <circle id="circ" cx="0" cy="0" r="0" fill="purple"/>
+        </svg>
+        
+       </div>
+    )
+  }
+}
+
+
+
+
+class ButtonList extends React.Component{
+  render(){ 
+    let arr = this.props.colors;
+    let keyColor = this.props.keyColor;
+    console.log('button props:', this.props);
+
+    return(
+      <div>
+        <ul>
+           {arr.map(element => <li><button onClick={()=> this.props.action(element, keyColor)}>{element[0][1]}</button></li>)}
+        </ul>
+      </div>
+    );
+  }
+} 
+
+ReactDOM.render(
+<Quiz />, document.getElementById('root')
+)
